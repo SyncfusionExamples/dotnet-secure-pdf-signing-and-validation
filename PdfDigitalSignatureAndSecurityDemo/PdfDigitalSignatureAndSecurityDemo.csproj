@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>PdfDigitalSignatureAndSecurityDemo</RootNamespace>
+    <AssemblyName>PdfDigitalSignatureAndSecurityDemo</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\SampleFiles\certificate.pfx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Syncfusion .NET PDF library (cross-platform package supports ASP.NET Core) -->
+    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="30.2.4" />
+    <PackageReference Include="Syncfusion.Licensing" Version="30.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\SampleFiles\Input.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\SampleFiles\PDFCertificate.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\SampleFiles\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\SampleFiles\signature.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\SampleFiles\SignedDocument.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

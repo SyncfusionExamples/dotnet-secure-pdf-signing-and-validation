@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-body text-center p-5">
+                <h1 class="card-title mb-3">PDF Digital Signature &amp; Security Demo</h1>
+                <p class="lead text-muted">
+                    Sign PDF documents, apply encryption, restrict permissions, and
+                    validate digital signatures — all powered by the
+                    <strong>Syncfusion .NET PDF Library</strong>.
+                </p>
+
+                <div class="row mt-4 g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body">
+                                <h4>📝 Sign &amp; Secure</h4>
+                                <p class="small text-muted">
+                                    Upload a PDF, add a visible signature image, encrypt with
+                                    AES-256, disable printing / copying / editing, and flatten
+                                    form fields.
+                                </p>
+                                <a class="btn btn-primary" href="/Signature/Sign">Go to Sign &amp; Secure</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-success">
+                            <div class="card-body">
+                                <h4>🔍 Validate Signature</h4>
+                                <p class="small text-muted">
+                                    Upload a signed PDF (or use the default) and view
+                                    the certificate &amp; signature metadata in a text area.
+                                </p>
+                                <a class="btn btn-success" href="/Signature/Validate">Go to Validate Signature</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="small text-muted mt-4 mb-0">
+                    Default sample files (PDF, signature image, PFX certificate) are served from
+                    <code>wwwroot/SampleFiles/</code> when no upload is supplied.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

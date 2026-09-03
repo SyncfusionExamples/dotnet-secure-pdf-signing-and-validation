@@ -1,0 +1,40 @@
+@model ValidateSignatureViewModel
+@{
+    ViewData["Title"] = "Validate Signature";
+}
+
+<h2 class="mb-4">🔍 Validate Signature</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-info">@Model.Message</div>
+}
+
+<form asp-action="Validate" asp-controller="Signature" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="card mb-4">
+        <div class="card-header fw-bold">📂 Input — Signed PDF (optional)</div>
+        <div class="card-body">
+            <label asp-for="SignedPdfFile" class="form-label">Upload a signed PDF</label>
+            <input asp-for="SignedPdfFile" type="file" accept="application/pdf" class="form-control" />
+            <div class="form-text">
+                If left empty, the bundled <code>SignedDocument.pdf</code> from
+                <code>wwwroot/SampleFiles</code> is used.
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success btn-lg">Validate</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.SignatureInformation))
+{
+    <hr class="my-4" />
+    <div class="card">
+        <div class="card-header fw-bold">📄 Signature Information</div>
+        <div class="card-body">
+            <textarea class="form-control signature-info" rows="20" readonly>@Model.SignatureInformation</textarea>
+        </div>
+    </div>
+}

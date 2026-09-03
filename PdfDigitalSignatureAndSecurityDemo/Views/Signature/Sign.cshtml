@@ -1,0 +1,131 @@
+@model SignPdfViewModel
+@{
+    ViewData["Title"] = "Sign & Secure PDF";
+}
+
+<h2 class="mb-4">📝 Sign &amp; Secure PDF</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert @(Model.OutputPdf != null ? "alert-success" : "alert-danger")">
+        @Model.Message
+    </div>
+}
+
+<form asp-action="Sign" asp-controller="Signature" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="card mb-4">
+        <div class="card-header fw-bold">📂 Inputs (all optional — defaults are served from wwwroot/SampleFiles)</div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label asp-for="PdfFile" class="form-label">PDF file</label>
+                <input asp-for="PdfFile" type="file" accept="application/pdf" class="form-control" />
+                <div class="form-text">If left empty, <code>Input.pdf</code> from <code>wwwroot/SampleFiles</code> is used.</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CertificateFile" class="form-label">PFX certificate (optional)</label>
+                    <input asp-for="CertificateFile" type="file" accept=".pfx,.p12" class="form-control" />
+                    <div class="form-text">Defaults to <code>Certificate.pfx</code>.</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CertificatePassword" class="form-label">Certificate password (optional)</label>
+                    <input asp-for="CertificatePassword" type="password" class="form-control"
+                           placeholder="leave empty to use bundled default" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SignatureImage" class="form-label">Signature image (PNG/JPG, optional)</label>
+                <input asp-for="SignatureImage" type="file" accept="image/png,image/jpeg" class="form-control" />
+                <div class="form-text">Defaults to <code>Signature.png</code>.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header fw-bold">⚙️ Options</div>
+        <div class="card-body">
+            <div class="form-check mb-2">
+                <input asp-for="AddVisibleSignature" class="form-check-input" />
+                <label asp-for="AddVisibleSignature" class="form-check-label">Add visible signature image</label>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="FlattenFormFields" class="form-check-input" />
+                <label asp-for="FlattenFormFields" class="form-check-label">Flatten form fields</label>
+            </div>
+
+            <div class="form-check mb-2">
+                <input asp-for="EncryptPdf" class="form-check-input" id="chkEncrypt" />
+                <label asp-for="EncryptPdf" class="form-check-label">Encrypt PDF (AES-256)</label>
+            </div>
+
+            <div class="mb-3 ms-4" id="openPwdBox" style="display:none">
+                <label asp-for="OpenPassword" class="form-label">Open password</label>
+                <input asp-for="OpenPassword" type="password" class="form-control" id="txtOpenPassword"
+                       placeholder="required to view the document" />
+            </div>
+
+            <div id="permissionsBox" class="ms-4" style="display:none">
+                <div class="form-check mb-2">
+                    <input asp-for="DisablePrinting" class="form-check-input permission-check" id="chkDisablePrinting" disabled />
+                    <label asp-for="DisablePrinting" class="form-check-label">Disable printing</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input asp-for="DisableCopying" class="form-check-input permission-check" id="chkDisableCopying" disabled />
+                    <label asp-for="DisableCopying" class="form-check-label">Disable copying</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input asp-for="DisableEditing" class="form-check-input permission-check" id="chkDisableEditing" disabled />
+                    <label asp-for="DisableEditing" class="form-check-label">Disable editing</label>
+                </div>
+                <div class="form-text">These restrictions become available once an open password is provided.</div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg">Sign &amp; Secure</button>
+</form>
+
+@section Scripts {
+    <script>
+        // Toggle the Encrypt PDF / open-password / permission sections together,
+        // and only let the permission checkboxes become active once the open
+        // password actually has some text in it.
+        (function () {
+            const chkEncrypt         = document.getElementById('chkEncrypt');
+            const openPwdBox         = document.getElementById('openPwdBox');
+            const permissionsBox     = document.getElementById('permissionsBox');
+            const pwdInput           = document.getElementById('txtOpenPassword');
+            const permissionChecks   = document.querySelectorAll('.permission-check');
+
+            const syncVisibility = () => {
+                const on = chkEncrypt.checked;
+                openPwdBox.style.display     = on ? '' : 'none';
+                permissionsBox.style.display = on ? '' : 'none';
+
+                if (!on) {
+                    permissionChecks.forEach(c => c.checked = false);
+                }
+            };
+
+            const syncAvailability = () => {
+                const hasPassword = pwdInput.value.trim().length > 0;
+                permissionChecks.forEach(c => {
+                    c.disabled = !hasPassword;
+                    if (!hasPassword) c.checked = false;
+                });
+            };
+
+            chkEncrypt.addEventListener('change', () => { syncVisibility(); syncAvailability(); });
+            pwdInput  .addEventListener('input',  syncAvailability);
+
+            // Initial render (handles round-trip from the controller).
+            syncVisibility();
+            syncAvailability();
+        })();
+    </script>
+}
