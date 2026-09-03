@@ -1,4 +1,4 @@
-# PdfDigitalSignatureAndSecurityDemo
+# Secure PDF Documents with Digital Signatures in ASP.NET Core Using Syncfusion® .NET PDF Library
 
 A small ASP.NET Core 8 MVC sample that uses the **Syncfusion .NET PDF Library**
 to sign and secure PDF documents, and to read back the signature information
