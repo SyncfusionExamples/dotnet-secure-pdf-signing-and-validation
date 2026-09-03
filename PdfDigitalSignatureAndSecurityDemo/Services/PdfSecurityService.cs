@@ -75,9 +75,8 @@ namespace PdfDigitalSignatureAndSecurityDemo.Services
                 security.KeySize = PdfEncryptionKeySize.Key256Bit;
                 security.Algorithm = PdfEncryptionAlgorithm.AES;
                 security.UserPassword  = model.OpenPassword;
-                security.OwnerPassword = string.IsNullOrWhiteSpace(model.OpenPassword)
-                    ? "owner"
-                    : model.OpenPassword;
+                 // default owner password
+                security.OwnerPassword = "Syncfusion";
                 // Compute the permission set. Start with FullQualityPrint + AccessibilityCopy
                 var permissions = PdfPermissionsFlags.Print
                    | PdfPermissionsFlags.EditContent

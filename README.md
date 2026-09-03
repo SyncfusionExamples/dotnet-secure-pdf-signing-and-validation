@@ -1,81 +1,86 @@
-# PDF Digital Signature & Security Demo (.NET 8)
+# PdfDigitalSignatureAndSecurityDemo
 
-An ASP.NET Core MVC application demonstrating digital signature creation, AES-256 encryption, permission restrictions, form field flattening, and signature validation using the **Syncfusion .NET PDF Library**.
+A small ASP.NET Core 8 MVC sample that uses the **Syncfusion .NET PDF Library**
+to sign and secure PDF documents, and to read back the signature information
+from a signed file.
 
----
+## Pages
 
-## ✨ Features
+| Page | Route | Description |
+| --- | --- | --- |
+| **Home** | `/` | Landing page with links to both demo pages. |
+| **Sign & Secure** | `/Signature/Sign` | Upload (or use the default) PDF, PFX, signature image, then sign + apply encryption/permissions and download. |
+| **Validate** | `/Signature/Validate` | Upload (or use the default) signed PDF, view signer certificate and signature info. |
 
-- **Digital Signature**: Sign PDFs using PFX certificates (CAdES standard, SHA-256 digest) with optional visible signature overlays.
-- **AES-256 Encryption**: Password-protect documents with open/user passwords.
-- **Granular Permissions**: Restrict printing, content copying, and editing.
-- **Form Flattening**: Permanently flatten AcroForm fields into page content.
-- **One-Click Download**: Automatically generate and download secured PDFs.
-- **Signature Validation**: Inspect signer information, certificate validity, and document integrity.
+## Features
 
----
+* Visible signature image overlay on the last page
+* Invisible digital signature (PKCS#7 / CAdES, SHA-256)
+* AES-256 encryption with an open password
+* Disable printing / copying / editing
+* Flatten AcroForm fields
+* Read-back of signature + signer certificate details
 
-## 🛠️ Tech Stack
+## Project structure
 
-- **Framework**: .NET 8.0 (ASP.NET Core MVC)
-- **PDF Engine**: `Syncfusion.Pdf.Net.Core` (v30.2.4)
-- **UI**: Bootstrap 5.3
-
----
-
-## 📂 Project Structure
-
-```text
-PdfDigitalSignatureAndSecurityDemo/
-├── Controllers/
-│   ├── HomeController.cs        # Home navigation
-│   └── SignatureController.cs   # Sign, Secure & Validate actions
-├── Models/
-│   ├── SignPdfViewModel.cs      # Sign & security model
-│   └── ValidateSignatureViewModel.cs # Validation model
-├── Services/
-│   ├── PdfSecurityService.cs    # Signing, encryption & permissions logic
-│   └── PdfValidationService.cs  # Validation & certificate parsing logic
-├── Views/
-│   ├── Home/Index.cshtml        # Home dashboard
-│   └── Signature/
-│       ├── Sign.cshtml          # Sign & Secure UI
-│       └── Validate.cshtml      # Signature Validation UI
-└── wwwroot/SampleFiles/         # Bundled sample PDFs, PFX & images
+```
+PdfDigitalSignatureAndSecurityDemo
+├── Controllers
+│   ├── HomeController.cs
+│   └── SignatureController.cs
+├── Models
+│   ├── SignPdfViewModel.cs
+│   └── ValidateSignatureViewModel.cs
+├── Services
+│   ├── PdfSecurityService.cs
+│   └── PdfValidationService.cs
+├── Views
+│   ├── Home
+│   │   └── Index.cshtml
+│   ├── Signature
+│   │   ├── Sign.cshtml
+│   │   └── Validate.cshtml
+│   └── Shared
+│       └── _Layout.cshtml
+├── wwwroot
+│   └── SampleFiles
+│       ├── Input.pdf
+│       ├── SignedDocument.pdf
+│       ├── Signature.png
+│       └── Certificate.pfx
+├── Properties
+│   └── launchSettings.json
+├── Program.cs
+├── appsettings.json
+└── PdfDigitalSignatureAndSecurityDemo.csproj
 ```
 
----
+## Run
 
-## 🚀 Quick Start
-
-### 1. Clone & Run
-```bash
-git clone https://github.com/<your-username>/dotnet-secure-pdf-signing-and-validation.git
-cd dotnet-secure-pdf-signing-and-validation
+```powershell
+cd PdfDigitalSignatureAndSecurityDemo
 dotnet restore
 dotnet run
 ```
 
-Open in browser:
-- **HTTPS**: `https://localhost:5001`
-- **HTTP**: `http://localhost:5000`
+Then open <https://localhost:5001> (or <http://localhost:5000>).
 
----
+## Syncfusion license
 
-## 🔑 Default Sample Credentials
+Set your Syncfusion license key via:
 
-If no custom files are uploaded in the UI, the application automatically uses default sample assets from `wwwroot/SampleFiles/`:
+* Environment variable `SYNCFUSION_LICENSE_KEY`, **or**
+* `appsettings.json` → `Syncfusion:LicenseKey`, **or**
+* The `SyncfusionLicenseProvider.RegisterLicense(...)` call in `Program.cs`.
 
-| Asset | Default Password |
-|---|---|
-| `PDFCertificate.pfx` | `syncfusion` |
+A free community license is available at
+<https://www.syncfusion.com/products/communitylicense>.
 
----
+## Default sample files
 
-## 📄 License
+| File | Default password (when none supplied in UI) |
+| --- | --- |
+| `Certificate.pfx` | `syncfusion` |
 
-This project uses Syncfusion® PDF libraries for PDF processing, digital signatures, encryption, and validation.
-
-Use of Syncfusion components is governed by Syncfusion's licensing terms. A valid Syncfusion Community or Commercial license may be required to build, run, or distribute applications that use these components.
-
-For complete licensing information, refer to the official Syncfusion documentation: [Link](https://help.syncfusion.com/document-processing/licensing/overview)
+Replace the bundled `Input.pdf`, `Signature.png`, `Certificate.pfx`, and
+`SignedDocument.pdf` with your own files to try the demo end-to-end.
