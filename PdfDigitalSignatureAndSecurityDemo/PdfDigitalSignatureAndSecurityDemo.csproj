@@ -39,4 +39,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Certificates\Rootcertificate.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

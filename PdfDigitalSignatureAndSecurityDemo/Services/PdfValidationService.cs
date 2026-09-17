@@ -48,30 +48,14 @@ namespace PdfDigitalSignatureAndSecurityDemo.Services
         }
 
         /// <summary>
-        /// Loads certificates from uploaded files and default root certificate.
+        /// Loads certificates from uploaded files, or default root certificate if no uploads provided.
         /// Returns a collection of X509Certificate2 objects for signature validation.
         /// </summary>
         private X509Certificate2Collection LoadCertificates(IFormFileCollection? uploadedCertificates)
         {
             var certificateCollection = new X509Certificate2Collection();
 
-            // Always load the default root certificate
-            var rootCertPath = Path.Combine(_env.ContentRootPath, "Certificates", "Rootcertificate.cer");
-            if (File.Exists(rootCertPath))
-            {
-                try
-                {
-                    var rootCert = new X509Certificate2(rootCertPath);
-                    certificateCollection.Add(rootCert);
-                }
-                catch (Exception ex)
-                {
-                    // Log or handle the error, but don't fail - continue with validation
-                    System.Diagnostics.Debug.WriteLine($"Failed to load root certificate: {ex.Message}");
-                }
-            }
-
-            // Load any uploaded certificates
+            // Load uploaded certificates if available
             if (uploadedCertificates != null && uploadedCertificates.Count > 0)
             {
                 foreach (var certFile in uploadedCertificates)
@@ -100,6 +84,24 @@ namespace PdfDigitalSignatureAndSecurityDemo.Services
                         {
                             System.Diagnostics.Debug.WriteLine($"Failed to load certificate {certFile.FileName}: {ex.Message}");
                         }
+                    }
+                }
+            }
+            else
+            {
+                // Only load the default root certificate if no uploaded certificates are available
+                var rootCertPath = Path.Combine(_env.ContentRootPath, "Certificates", "Rootcertificate.cer");
+                if (File.Exists(rootCertPath))
+                {
+                    try
+                    {
+                        var rootCert = new X509Certificate2(rootCertPath);
+                        certificateCollection.Add(rootCert);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log or handle the error, but don't fail - continue with validation
+                        System.Diagnostics.Debug.WriteLine($"Failed to load root certificate: {ex.Message}");
                     }
                 }
             }
