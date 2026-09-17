@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -46,12 +48,73 @@ namespace PdfDigitalSignatureAndSecurityDemo.Services
         }
 
         /// <summary>
+        /// Loads certificates from uploaded files and default root certificate.
+        /// Returns a collection of X509Certificate2 objects for signature validation.
+        /// </summary>
+        private X509Certificate2Collection LoadCertificates(IFormFileCollection? uploadedCertificates)
+        {
+            var certificateCollection = new X509Certificate2Collection();
+
+            // Always load the default root certificate
+            var rootCertPath = Path.Combine(_env.ContentRootPath, "Certificates", "Rootcertificate.cer");
+            if (File.Exists(rootCertPath))
+            {
+                try
+                {
+                    var rootCert = new X509Certificate2(rootCertPath);
+                    certificateCollection.Add(rootCert);
+                }
+                catch (Exception ex)
+                {
+                    // Log or handle the error, but don't fail - continue with validation
+                    System.Diagnostics.Debug.WriteLine($"Failed to load root certificate: {ex.Message}");
+                }
+            }
+
+            // Load any uploaded certificates
+            if (uploadedCertificates != null && uploadedCertificates.Count > 0)
+            {
+                foreach (var certFile in uploadedCertificates)
+                {
+                    if (certFile.Length > 0)
+                    {
+                        var tempPath = Path.Combine(Path.GetTempPath(),
+                            $"{Guid.NewGuid():N}_{Path.GetFileName(certFile.FileName)}");
+                        try
+                        {
+                            using (var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write))
+                            {
+                                certFile.CopyTo(fs);
+                            }
+                            var cert = new X509Certificate2(tempPath);
+                            certificateCollection.Add(cert);
+
+                            // Clean up temp file
+                            if (File.Exists(tempPath))
+                            {
+                                try { File.Delete(tempPath); }
+                                catch { }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Failed to load certificate {certFile.FileName}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+
+            return certificateCollection;
+        }
+
+        /// <summary>
         /// Opens the supplied signed PDF and produces a human-readable summary
         /// of every signature field found in the document.
         /// </summary>
         public string ReadSignatureInformation(ValidateSignatureViewModel model)
         {
             var pdfPath = ResolveInput(model.SignedPdfFile, "SignedDocument.pdf");
+            var certificates = LoadCertificates(model.CertificateFiles);
 
             using var inputStream = new FileStream(pdfPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
@@ -121,7 +184,7 @@ namespace PdfDigitalSignatureAndSecurityDemo.Services
 
                     var signature  = sigField.Signature;
                     var cert       = signature.Certificate;
-                    var statusInfo = TryGetSignatureStatus(sigField, out var statusMessage)
+                    var statusInfo = TryGetSignatureStatus(sigField, certificates, out var statusMessage)
                                      ? statusMessage
                                      : "(trust chain not provided – integrity details unavailable)";
 
@@ -159,15 +222,25 @@ namespace PdfDigitalSignatureAndSecurityDemo.Services
         }
 
         /// <summary>
-        /// Best-effort signature validation. Only meaningful if the caller supplies
-        /// trusted root/intermediate certificates via ValidateSignature(); in this
-        /// demo we only perform a structural integrity check.
+        /// Best-effort signature validation. Uses supplied root/intermediate certificates
+        /// to validate the signature chain. If certificates are provided, returns Valid/Unknown status.
         /// </summary>
-        private static bool TryGetSignatureStatus(PdfLoadedSignatureField field, out string message)
+        private static bool TryGetSignatureStatus(PdfLoadedSignatureField field, X509Certificate2Collection? certificates, out string message)
         {
             try
             {
-                PdfSignatureValidationResult result = field.ValidateSignature();
+                PdfSignatureValidationResult result;
+
+                // If certificates are provided, pass them to ValidateSignature for chain validation
+                if (certificates != null && certificates.Count > 0)
+                {
+                    result = field.ValidateSignature(certificates);
+                }
+                else
+                {
+                    result = field.ValidateSignature();
+                }
+
                 message = $"Signature Status : {result.SignatureStatus}" +
                           $"\nDocument Modified: {result.IsDocumentModified}" +
                           $"\nSignature Alg.   : {result.SignatureAlgorithm}" +
