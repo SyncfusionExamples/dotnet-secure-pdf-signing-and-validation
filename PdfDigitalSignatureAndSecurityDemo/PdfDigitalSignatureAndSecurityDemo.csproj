@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Certificates\Certificate.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Syncfusion .NET PDF library (cross-platform package supports ASP.NET Core) -->
     <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="30.2.4" />
     <PackageReference Include="Syncfusion.Licensing" Version="30.2.4" />
@@ -20,9 +26,6 @@
 
   <ItemGroup>
     <Content Update="wwwroot\SampleFiles\Input.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\SampleFiles\PDFCertificate.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\SampleFiles\README.md">
