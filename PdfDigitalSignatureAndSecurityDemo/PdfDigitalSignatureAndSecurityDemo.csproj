@@ -20,8 +20,7 @@
 
   <ItemGroup>
     <!-- Syncfusion .NET PDF library (cross-platform package supports ASP.NET Core) -->
-    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="30.2.4" />
-    <PackageReference Include="Syncfusion.Licensing" Version="30.2.4" />
+    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="*" />    
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +36,12 @@
     <Content Update="wwwroot\SampleFiles\SignedDocument.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Certificates\Rootcertificate.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

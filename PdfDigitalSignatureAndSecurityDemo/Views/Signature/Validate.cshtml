@@ -14,13 +14,27 @@
     @Html.AntiForgeryToken()
 
     <div class="card mb-4">
-        <div class="card-header fw-bold">📂 Input — Signed PDF (optional)</div>
+      <div class="card-header fw-bold">📂 Input — Signed PDF (Optional)</div>
         <div class="card-body">
             <label asp-for="SignedPdfFile" class="form-label">Upload a signed PDF</label>
             <input asp-for="SignedPdfFile" type="file" accept="application/pdf" class="form-control" />
             <div class="form-text">
                 If left empty, the bundled <code>SignedDocument.pdf</code> from
                 <code>wwwroot/SampleFiles</code> is used.
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header fw-bold">🔐 Input — Public Certificates (Optional)</div>
+        <div class="card-body">
+            <label asp-for="CertificateFiles" class="form-label">Upload Public Certificates (Root & Intermediate)</label>
+            <input asp-for="CertificateFiles" type="file" accept=".cer" class="form-control" multiple />
+            <div class="form-text mt-2">
+                <strong>&#9432; Note:</strong> This step is optional. If public certificates are supplied,
+                the signature will be validated against the root/intermediate certificate chain and marked as <strong>Valid</strong> if it matches.
+                If no certificates are provided, the signature status will be marked as <strong>Unknown</strong>.
+                By default, the bundled <code>Rootcertificate.cer</code> from the <code>Certificates</code> folder is used.
             </div>
         </div>
     </div>
